@@ -4,14 +4,17 @@ import mongoose from "mongoose";
 import connectDB from "./config/dbConnection.js";
 import registerRoute from "./routes/registerRoute.js";
 import authRoute from "./routes/authRoute.js";
-
+import movieRoute from "./routes/movieRoute.js";
+import cors from "cors";
 //initialize express app
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 //environment variables
 dotenv.config();
 connectDB();
+app.use(cors());
 app.use(express.json());
 
 //routes

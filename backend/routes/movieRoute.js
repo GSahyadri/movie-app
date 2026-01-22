@@ -1,4 +1,5 @@
 import express from "express";
+import { verifyToken, verifyAdmin } from "../controllers/authController.js";
 import {
   getMovies,
   addMovies,
@@ -9,10 +10,9 @@ import {
 const router = express.Router();
 
 // user routes
-router.get("/", getMovies); // Get all movies
+router.get("/", verifyToken, getMovies); // Get all movies
 // admin routes
-router.post("/", addMovies); // Add a new movie
-router.put("/:id", updateMovie); // Update a movie
-router.delete("/:id", deleteMovie); // Delete a movie
-
+router.post("/", verifyToken, verifyAdmin, addMovies); // Add a new movie
+router.put("/:id", verifyToken, verifyAdmin, updateMovie); // Update a movie
+router.delete("/:id", verifyToken, verifyAdmin, deleteMovie); // Delete a movie
 export default router;

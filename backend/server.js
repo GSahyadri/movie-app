@@ -6,16 +6,25 @@ import registerRoute from "./routes/registerRoute.js";
 import authRoute from "./routes/authRoute.js";
 import movieRoute from "./routes/movieRoute.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+
+dotenv.config();
+
 //initialize express app
 const app = express();
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 //environment variables
-dotenv.config();
+
 connectDB();
-app.use(cors());
-app.use(express.json());
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL, // frontend URL
+  credentials: true // allow cookies to be sent
+}));
+
+app.use(express.json());  //middleware to parse JSON request body
+app.use(cookieParser());  //middleware to parse cookies
 
 //routes
 app.use("/register", registerRoute);

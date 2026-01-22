@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User from "../model/user.js";
 
 export const handleLogin = async (req, res) => {
@@ -17,5 +18,63 @@ export const handleLogin = async (req, res) => {
     if(!match){
         return res.status(401).json({'message': 'wrong password'})
     }
-    res.status(200).json({'message': 'login success'})
+    
+    //login successful
+     const token = jwt.sign(
+        { id: foundUser._id, username: foundUser.username },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+
+    // Set token in HTTP-only cookie
+    res.cookie('token', token, {
+        httpOnly: true, // Prevents JS access (XSS protection)
+        secure: process.env.NODE_ENV === 'production', // Set to true in production (HTTPS)
+        sameSite: 'strict', // CSRF protection
+        maxAge: 1800000 // 30 min in ms
+    });
+
+    res.status(200).json({
+        'message': 'login success',
+        'user': {
+            id: foundUser._id,
+            username: foundUser.username
+        }
+    });
+};
+
+// Verify JWT token
+export const verifyToken = (req, res, next) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(403).json({ message: 'Token is required' });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid or expired token' });
+    }
+};
+
+// Verify Admin role
+export const verifyAdmin = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        if (user.role !== 'admin') {
+            return res.status(403).json({ message: 'Admin access required' });
+        }
+        
+        next();
+    } catch (error) {
+        return res.status(500).json({ message: 'Error verifying admin', error: error.message });
+    }
 };

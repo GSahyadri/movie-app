@@ -1,73 +1,102 @@
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import { NavLink } from "react-router";
 import { useState } from "react";
-import axios from "axios";
+import { Box, Button, TextField, Typography, Paper, Alert } from "@mui/material";
+import apiClient from "../api/apiClient";
+import { Link, useNavigate } from "react-router";
 
 const Login = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const loginInHandler = async () => {
+  const loginHandler = async () => {
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:3000/auth", {
+      const response = await apiClient.post("/auth", {
         username: email,
         password: password,
       });
       console.log("Login response", response);
-      setSuccess(true);
-      setSuccessMessage("Login Successful!");
+      navigate("/movies");
     } catch (error) {
       console.error("Login error", error.response.data);
-      setIsError(true);
-      setErrorMessage(error.response.data.message);
+      setError(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Stack
-      spacing={2}
-      sx={{ width: "300px", margin: "0 auto", marginTop: "100px" }}
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
-      <h2>Login</h2>
-      <TextField
-        id="email"
-        label="Email"
-        variant="outlined"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <TextField
-        id="password"
-        label="Password"
-        variant="outlined"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {isError && (
-        <Typography color="error" align="center">
-          {errorMessage}
+      <Paper sx={{ p: 4, width: 320 }}>
+        <Typography variant="h6" mb={2}>
+          Login
         </Typography>
-      )}
-      <Button variant="contained" onClick={loginInHandler}>
-        Login
-      </Button>
-      {success && (
-        <Typography color="primary" align="center">
-          {successMessage}
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Box>
+          <TextField
+            fullWidth
+            label="Email"
+            size="small"
+            margin="normal"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            size="small"
+            margin="normal"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <Button
+            fullWidth
+            type="submit"
+            variant="contained"
+            sx={{ mt: 2 }}
+            loading={isLoading}
+            onClick={loginHandler}
+          >
+            Login
+          </Button>
+        </Box>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 2 }}
+        >
+          Don&apos;t have an account?{" "}
+          <Link to="/sign-up" style={{ textDecoration: "none" }}>
+            Sign up
+          </Link>
         </Typography>
-      )}
-      <Typography align="center">or</Typography>
-      <Typography align="center">
-        Don't have you account ?<NavLink to="/sign-up">Sign Up</NavLink>
-      </Typography>
-    </Stack>
+      </Paper>
+    </Box>
   );
 };
+
 export default Login;

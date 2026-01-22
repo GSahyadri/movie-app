@@ -1,91 +1,137 @@
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import { NavLink } from "react-router";
 import { useState } from "react";
-import axios from "axios";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  MenuItem,
+  Alert,
+} from "@mui/material";
+import { Link } from "react-router";
+import apiClient from "../api/apiClient";
 
 const SignUp = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
-  const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const signInHandler = async () => {
+  const signUpHandler = async () => {
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
     try {
-      const response = await axios.post("http://localhost:3000/register", {
+      const response = await apiClient.post("/register", {
         username: email,
         password: password,
         role: role,
       });
       console.log("Sign Up response", response);
-      setSuccess(true);
-      setSuccessMessage("Registration Successful! Please login.");
+      setSuccess("Registration Successful! Please login.");
+      setEmail("");
+      setPassword("");
+      setRole("");
     } catch (error) {
       console.error("Sign Up error", error.response.data.message);
-      setIsError(true);
-      setErrorMessage(error.response.data.message);
+        setError(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Stack
-      spacing={2}
-      sx={{ width: "300px", margin: "0 auto", marginTop: "100px" }}
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
-      <h2>Create New Account</h2>
-      <TextField
-        id="email"
-        label="Email"
-        variant="outlined"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <TextField
-        id="password"
-        label="Password"
-        variant="outlined"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <InputLabel id="role" label="Role" variant="outlined">
-        Role
-      </InputLabel>
-      <Select
-        labelId="role"
-        id="demo-simple-select"
-        value={role}
-        label="Role"
-        onChange={(e) => setRole(e.target.value)}
-      >
-        <MenuItem value={"admin"}>admin</MenuItem>
-        <MenuItem value={"user"}>user</MenuItem>
-      </Select>
-      {isError && (
-        <Typography color="error" align="center">
-          {errorMessage}
+      <Paper sx={{ p: 4, width: 320 }}>
+        <Typography variant="h6" mb={2}>
+          Sign Up
         </Typography>
-      )}
-      <Button variant="contained" onClick={signInHandler}>
-        Sign Up
-      </Button>
-      {success && (
-        <Typography color="primary" align="center">
-          {successMessage}
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {success}
+          </Alert>
+        )}
+
+        <Box>
+          <TextField
+            fullWidth
+            label="Email"
+            size="small"
+            margin="normal"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            size="small"
+            margin="normal"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <TextField
+            fullWidth
+            select
+            label="Role"
+            size="small"
+            margin="normal"
+            required
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="user">User</MenuItem>
+          </TextField>
+
+          <Button
+            fullWidth
+            type="submit"
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={signUpHandler}
+            loading={isLoading}
+          >
+            Sign Up
+          </Button>
+        </Box>
+
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 2 }}
+        >
+          Already have an account?{" "}
+          <Link to="/login" style={{ textDecoration: "none" }}>
+            Login
+          </Link>
         </Typography>
-      )}
-      <Typography align="center">or</Typography>
-      <Typography align="center">
-        Already have an account ?<NavLink to="/login">Login</NavLink>
-      </Typography>
-    </Stack>
+      </Paper>
+    </Box>
   );
 };
+
 export default SignUp;

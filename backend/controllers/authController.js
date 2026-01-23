@@ -31,7 +31,7 @@ export const handleLogin = async (req, res) => {
         httpOnly: true, // Prevents JS access (XSS protection)
         secure: process.env.NODE_ENV === 'production', // Set to true in production (HTTPS)
         sameSite: 'strict', // CSRF protection
-        maxAge: 1800000 // 30 min in ms
+        maxAge: 3600000 // 1 hr in ms
     });
 
     res.status(200).json({

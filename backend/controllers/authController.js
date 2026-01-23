@@ -43,6 +43,15 @@ export const handleLogin = async (req, res) => {
     });
 };
 
+export const handleLogout = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+    });
+    res.status(200).json({ message: 'Logout successful' });
+}
+
 // Verify JWT token
 export const verifyToken = (req, res, next) => {
     const token = req.cookies.token;

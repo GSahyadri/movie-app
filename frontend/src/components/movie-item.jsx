@@ -13,7 +13,7 @@ const MovieItem = ({ movie }) => {
         {/* Image */}
         <Box
           component="img"
-          src={movie.poster}
+          src={movie.imageUrl}
           alt={movie.title}
           sx={{
             width: 90,

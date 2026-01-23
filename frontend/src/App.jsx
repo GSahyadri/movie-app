@@ -5,6 +5,7 @@ import SignUp from "./pages/sign-up";
 import Movies from "./pages/movies";
 import AddMovie from "./pages/add-movie";
 import Layout from "./components/layout";
+import SearchMovies from "./pages/search-page";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Movies />} />
           <Route path="/add-movie" element={<AddMovie />} />
+          <Route path="/search-page" element={<SearchMovies />} />
         </Route>
       </Routes>
     </>

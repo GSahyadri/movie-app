@@ -26,6 +26,18 @@ function Movies() {
     fetchMovies();
   }, []);
 
+    const getSortedMovies = async (value) => {
+      // Implement sorting logic here
+      try {
+        const res = await apiClient.get(`/movies/sorted?sortBy=${value}`);
+        const data = res.data;
+        console.log("Sorted movies", data);
+        setMovies(data);
+      } catch (error) {
+        console.error("Sorting error", error.response.data);
+      }
+    };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -40,7 +52,7 @@ function Movies() {
           mt: 3,
         }}
       >
-        <SortMovies />
+        <SortMovies getSortedMovies={getSortedMovies} />
         <MovieList movies={movies} />
       </Box>
     </>

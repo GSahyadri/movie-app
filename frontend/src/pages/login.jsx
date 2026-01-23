@@ -22,7 +22,7 @@ const Login = () => {
         password: password,
       });
       console.log("Login response", response);
-      navigate("/movies");
+      navigate("/");
     } catch (error) {
       console.error("Login error", error.response.data);
       setError(error.response.data.message);

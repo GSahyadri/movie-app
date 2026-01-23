@@ -65,6 +65,14 @@ const Navbar = () => {
           >
             Add Movie
           </Typography>
+
+           <Typography
+            component={Link}
+            to="/search-page"
+            sx={{ color: "white", textDecoration: "none" }}
+          >
+            Search
+          </Typography>
         </Box>
 
         <Box sx={{ flexGrow: 1 }} />

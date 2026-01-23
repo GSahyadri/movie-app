@@ -8,17 +8,27 @@ import {
   MenuItem,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
+import apiClient from "../api/apiClient";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    try {
+      const response = await apiClient.post('/auth/logout');
+      console.log("Logout response", response);
+      // Redirect to login page
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
     setAnchorEl(null);
   };
 
@@ -50,10 +60,10 @@ const Navbar = () => {
 
           <Typography
             component={Link}
-            to="/search"
+            to="/add-movie"
             sx={{ color: "white", textDecoration: "none" }}
           >
-            Search
+            Add Movie
           </Typography>
         </Box>
 

@@ -4,6 +4,7 @@ import Login from "./pages/login";
 import SignUp from "./pages/sign-up";
 import Movies from "./pages/movies";
 import AddMovie from "./pages/add-movie";
+import Layout from "./components/layout";
 
 function App() {
   return (
@@ -11,8 +12,10 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/add-movie" element={<AddMovie />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Movies />} />
+          <Route path="/add-movie" element={<AddMovie />} />
+        </Route>
       </Routes>
     </>
   );

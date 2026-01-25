@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Box,
   Select,
@@ -8,9 +7,10 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import MoviesContext from "../context/movie-context";
 
-function SearchFilter(props) {
-  const { getSearchMovies } = props;
+function SearchFilter() {
+  const { getSearchMovies } = useContext(MoviesContext);
   const [selectedOption, setSelectedOption] = useState("title");
   const [searchValue, setSearchValue] = useState("");
 
@@ -38,7 +38,11 @@ function SearchFilter(props) {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <Button variant="contained" sx={{ minWidth: 100 }} onClick={handleSearch}>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 100 }}
+          onClick={handleSearch}
+        >
           Search
         </Button>
       </Box>

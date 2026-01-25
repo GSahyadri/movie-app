@@ -1,3 +1,4 @@
+import { useState, useContext } from "react";
 import {
   AppBar,
   Toolbar,
@@ -9,10 +10,12 @@ import {
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link, useNavigate } from "react-router";
-import { useState } from "react";
 import apiClient from "../api/apiClient";
+import MoviesContext from "../context/movie-context";
 
 const Navbar = () => {
+  const { isAdmin } = useContext(MoviesContext);
+
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -20,12 +23,16 @@ const Navbar = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = async () => {
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
     try {
-      const response = await apiClient.post('/auth/logout');
+      const response = await apiClient.post("/auth/logout");
       console.log("Logout response", response);
       // Redirect to login page
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -57,16 +64,16 @@ const Navbar = () => {
           >
             Home
           </Typography>
-
+          {isAdmin && (
+            <Typography
+              component={Link}
+              to="/add-movie"
+              sx={{ color: "white", textDecoration: "none" }}
+            >
+              Add Movie
+            </Typography>
+          )}
           <Typography
-            component={Link}
-            to="/add-movie"
-            sx={{ color: "white", textDecoration: "none" }}
-          >
-            Add Movie
-          </Typography>
-
-           <Typography
             component={Link}
             to="/search-page"
             sx={{ color: "white", textDecoration: "none" }}
@@ -84,7 +91,7 @@ const Navbar = () => {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

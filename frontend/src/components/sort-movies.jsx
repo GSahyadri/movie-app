@@ -1,9 +1,9 @@
-import * as React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Box, Select, MenuItem, FormControl, Typography } from "@mui/material";
+import MoviesContext from "../context/movie-context";
 
-export default function SortMovies(props) {
-  const { getSortedMovies } = props;
+export default function SortMovies() {
+  const { getSortedMovies } = useContext(MoviesContext);
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleChange = async (event) => {

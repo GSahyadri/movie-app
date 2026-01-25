@@ -6,22 +6,27 @@ import {
   Button,
   Alert,
 } from "@mui/material";
-import { useState } from "react";
-import apiClient from "../api/apiClient";
+import { useState, useContext } from "react";
+import { useParams } from "react-router";
+import moviesContext  from "../context/movie-context";
 
-const AddMovie = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
+const AddMovie = (props) => {
+  const { mode } = props;
+  const { id } = useParams(); // Get movie ID from URL params for edit mode
+  const { movies, addMovieHandler } = useContext(moviesContext); // Access movies and addMovie from context
+  const selectedMovie =
+    mode === "edit"
+      ? movies.find((movie) => movie._id === id)
+      : null;
 
   const [movie, setMovie] = useState({
-    imageUrl: "",
-    title: "",
-    description: "",
-    genre: "",
-    releaseDate: "",
-    duration: "",
-    rating: "",
+    imageUrl: mode === "edit" ? selectedMovie?.imageUrl : "",
+    title: mode === "edit" ? selectedMovie?.title : "",
+    description: mode === "edit" ? selectedMovie?.description : "",
+    genre: mode === "edit" ? selectedMovie?.genre : "",
+    releaseDate: mode === "edit" ? selectedMovie?.releaseDate : "",
+    duration: mode === "edit" ? selectedMovie?.duration : "",
+    rating: mode === "edit" ? selectedMovie?.rating : "",
   });
 
   const handleChange = (e) => {
@@ -33,41 +38,7 @@ const AddMovie = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-    setSuccess("");
-    //api call to backend
-    try {
-      const response = await apiClient.post("/movies", {
-        imageUrl: movie.imageUrl,
-        title: movie.title,
-        description: movie.description,
-        genre: movie.genre,
-        releaseDate: movie.releaseDate,
-        duration: movie.duration,
-        rating: movie.rating,
-      });
-      setSuccess("Movie added successfully");
-      console.log("Add Movie response", response);
-      // clear form
-      setMovie({
-        imageUrl: "",
-        title: "",
-        description: "",
-        genre: "",
-        releaseDate: "",
-        duration: "",
-        rating: "",
-      });
-    } catch (error) {
-      console.error("Add Movie error", error.response.data.message);
-      setError(error.response.data.message);
-    } finally {
-      setIsLoading(false);
-    }
-
-    // submit logic here
-    console.log(movie);
+    addMovieHandler(movie);
   };
 
   return (
@@ -80,18 +51,8 @@ const AddMovie = () => {
       }}
     >
       <Paper sx={{ p: 3 }}>
-        {success ||
-          (error && (
-            <Alert
-              severity={error ? "error" : "success"}
-              variant="filled"
-              sx={{ width: "100%" }}
-            >
-              {success || error}
-            </Alert>
-          ))}
         <Typography variant="h6" mb={2}>
-          Add Movie
+          {mode === "edit" ? "Edit Movie" : "Add Movie"}
         </Typography>
 
         <form onSubmit={handleSubmit}>
@@ -178,10 +139,8 @@ const AddMovie = () => {
             type="submit"
             variant="contained"
             sx={{ mt: 2 }}
-            disabled={isLoading}
-            loading={isLoading}
           >
-            Save Movie
+            {mode === "edit" ? "Update Movie" : "Add Movie"}
           </Button>
         </form>
       </Paper>

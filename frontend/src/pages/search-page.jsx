@@ -1,23 +1,19 @@
-import { useState } from "react";
+import { useEffect, useContext } from "react";
 import { Box } from "@mui/material";
-import apiClient from "../api/apiClient";
 import MovieList from "../components/movie-list";
 import SearchFilter from "../components/searchFilter";
+import MoviesContext from "../context/movie-context";
 
 function SearchMovies() {
-  const [movies, setMovies] = useState([]);
+  const { filteredMovies, setFilteredMovies } = useContext(MoviesContext);
 
-    const getSearchMovies = async (value, option) => {
-    // search using title or description option and input value
-    try {
-      const res = await apiClient.get(`/movies/search?input=${value}&option=${option}`);
-      const data = res.data;
-      console.log("Search movies", data);
-      setMovies(data);
-    } catch (error) {
-      console.error("Search error", error.response.data);
+  useEffect(() => {
+    // Clear filters when component unmounts
+    return () => {
+      setFilteredMovies([]);
     }
-  };
+  }, [setFilteredMovies]);
+  
 
   return (
     <>
@@ -29,8 +25,8 @@ function SearchMovies() {
           mt: 3,
         }}
       >
-        <SearchFilter getSearchMovies={getSearchMovies} />
-        <MovieList movies={movies} />
+        <SearchFilter />
+        <MovieList movies={filteredMovies} />
       </Box>
     </>
   );

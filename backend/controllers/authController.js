@@ -30,7 +30,7 @@ export const handleLogin = async (req, res) => {
     res.cookie('token', token, {
         httpOnly: true, // Prevents JS access (XSS protection)
         secure: process.env.NODE_ENV === 'production', // Set to true in production (HTTPS)
-        sameSite: 'strict', // CSRF protection
+        sameSite:  process.env.NODE_ENV === 'production' ? "none" : "lax",
         maxAge: 3600000 // 1 hr in ms
     });
 
@@ -48,7 +48,7 @@ export const handleLogout = (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'production' ? "none" : "lax"
     });
     res.status(200).json({ message: 'Logout successful' });
 }

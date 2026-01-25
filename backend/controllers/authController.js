@@ -38,7 +38,8 @@ export const handleLogin = async (req, res) => {
         'message': 'login success',
         'user': {
             id: foundUser._id,
-            username: foundUser.username
+            username: foundUser.username,
+            role: foundUser.role
         }
     });
 };

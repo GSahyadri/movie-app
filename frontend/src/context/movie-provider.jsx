@@ -88,6 +88,17 @@ const MoviesProvider = ({ children }) => {
     }
   };
 
+  const editMovieHandler = async (movieId, movieData) => {
+    try {
+      const response = await apiClient.put(`/movies/${movieId}`, movieData);
+        console.log("Edit Movie response", response);
+        setMovies(prevMovies => prevMovies.map(movie => movie._id === movieId ? response.data.movie : movie));
+        alert("Movie updated successfully");
+    } catch (error) {
+        errorHandler(error);
+    }
+  };
+
   return (
     <MoviesContext.Provider
       value={{
@@ -100,6 +111,7 @@ const MoviesProvider = ({ children }) => {
         getSearchMovies,
         deleteMovie,
         addMovieHandler,
+        editMovieHandler,
       }}
     >
       {isLoading ? <Loading/> : children}

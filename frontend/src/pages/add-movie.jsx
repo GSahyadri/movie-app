@@ -13,7 +13,7 @@ import moviesContext  from "../context/movie-context";
 const AddMovie = (props) => {
   const { mode } = props;
   const { id } = useParams(); // Get movie ID from URL params for edit mode
-  const { movies, addMovieHandler } = useContext(moviesContext); // Access movies and addMovie from context
+  const { movies, addMovieHandler, editMovieHandler } = useContext(moviesContext); // Access movies and addMovie from context
   const selectedMovie =
     mode === "edit"
       ? movies.find((movie) => movie._id === id)
@@ -38,7 +38,11 @@ const AddMovie = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    addMovieHandler(movie);
+    if (mode === "edit") {
+      editMovieHandler(id, movie);
+    } else {
+      addMovieHandler(movie);
+    }
   };
 
   return (

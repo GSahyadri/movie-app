@@ -2,6 +2,8 @@
 
 A modern React-based web application for browsing, searching, and managing movies with user authentication and admin capabilities.
 
+**Live App URL:** https://movie-fest.vercel.app
+
 ## Installation
 
 1. Clone the repository

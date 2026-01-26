@@ -55,7 +55,7 @@ const Login = () => {
         <Box>
           <TextField
             fullWidth
-            label="Username or Email"
+            label="Username"
             size="small"
             margin="normal"
             required

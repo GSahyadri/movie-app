@@ -53,7 +53,7 @@ const Navbar = () => {
             mr: 4,
           }}
         >
-          MovieTales
+          MovieFest
         </Typography>
 
         <Box sx={{ display: "flex", gap: 3 }}>

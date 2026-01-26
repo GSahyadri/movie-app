@@ -74,7 +74,7 @@ const SignUp = () => {
         <Box>
           <TextField
             fullWidth
-            label="Email"
+            label="Username or Email"
             size="small"
             margin="normal"
             required
